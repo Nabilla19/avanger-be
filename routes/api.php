@@ -35,24 +35,26 @@ Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
 
-    // == BANK (AUTHORIZATION) ==
+    // --- BANK ROUTES ---
 
-    // 1. Routes yang bisa diakses SEMUA ROLE (customer, admin, owner)
-    Route::get('/bank', [BankController::class, 'index']);
-    Route::get('/bank/{kode_bank}', [BankController::class, 'show']);
+    // 1. GET: Token harus punya kemampuan 'bank:read'
+    Route::get('/bank', [BankController::class, 'index'])
+        ->middleware(['abilities:bank:read']); 
+        
+    Route::get('/bank/{kode_bank}', [BankController::class, 'show'])
+        ->middleware(['abilities:bank:read']);
 
 
-    // 2. Routes yang HANYA bisa diakses oleh 'admin' dan 'owner'
-    //    Kita tambahkan middleware ->middleware('role:admin,owner')
-    
-    // --- PERBAIKAN ADA DI SINI ---
+    // 2. POST: Harus Admin DAN Token harus punya 'bank:create'
     Route::post('/bank', [BankController::class, 'store'])
-        ->middleware('role:admin,owner');  // <--- Tadi ini hilang!
+        ->middleware(['role:admin,owner', 'abilities:bank:create']);
 
+    // 3. PUT: Harus Admin DAN Token harus punya 'bank:update'
     Route::put('/bank/{kode_bank}', [BankController::class, 'update'])
-        ->middleware('role:admin,owner');
+        ->middleware(['role:admin,owner', 'abilities:bank:update']);
 
+    // 4. DELETE: Harus Admin DAN Token harus punya 'bank:delete'
     Route::delete('/bank/{kode_bank}', [BankController::class, 'destroy'])
-        ->middleware('role:admin,owner');
+        ->middleware(['role:admin,owner', 'abilities:bank:delete']);
 
 });

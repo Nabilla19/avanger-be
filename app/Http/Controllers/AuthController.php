@@ -74,7 +74,17 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email atau password salah'], 401);
         }
 
-        $token = $user->createToken('authToken', ['user:read', 'user:write'])->plainTextToken;
+        // Cek Role untuk menentukan kekuatan Token
+        if ($user->role == 'admin') {
+            // Admin punya kekuatan penuh: create, update, delete
+            $abilities = ['bank:create', 'bank:update', 'bank:delete', 'bank:read'];
+        } else {
+            // Customer cuma bisa baca (read)
+            $abilities = ['bank:read'];
+        }
+
+        // Buat token dengan abilities tersebut
+        $token = $user->createToken('authToken', $abilities)->plainTextToken;
 
         return response()->json([
             'message' => 'Login berhasil',

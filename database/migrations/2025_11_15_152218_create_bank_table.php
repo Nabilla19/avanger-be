@@ -8,15 +8,18 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('bank', function (Blueprint $table) {
-            $table->string('kode_bank', 6)->primary();   // PRIMARY KEY
-            $table->string('nama')->unique();
+        Schema::create('banks', function (Blueprint $table) {
+            $table->string('kode_bank', 10)->primary();   // PRIMARY KEY
+            $table->string('nama_bank', 100)->unique();
+            $table->text('alamat');
+            $table->string('kota', 50);
+            $table->string('provinsi', 50);
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('bank');
+        Schema::dropIfExists('banks');
     }
 };

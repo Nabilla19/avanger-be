@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('alamat');
 
             // Relasi bank
-            $table->string('kode_bank', 6);
+            $table->string('kode_bank', 10);
 
             // Role
             $table->enum('role', ['admin','owner','customer'])->default('customer');
@@ -42,10 +42,11 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign Key
-            $table->foreign('kode_bank')
-                ->references('kode_bank')
-                ->on('bank')
-                ->onDelete('restrict');
+          $table->foreign('kode_bank')
+    ->references('kode_bank')
+    ->on('banks')
+    ->onDelete('restrict');
+
         });
     }
 

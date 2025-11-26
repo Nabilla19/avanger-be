@@ -24,4 +24,10 @@ class Peminjaman extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+        public function pembayaran()
+    {
+        return $this->hasMany(PembayaranPeminjaman::class, 'peminjaman_id');
+    }
+
 }

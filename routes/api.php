@@ -63,6 +63,35 @@ Route::middleware(['auth:sanctum'])->group(function () {
             ->middleware(['role:admin']);
         Route::put('/{id}/status', [PeminjamanController::class, 'updateStatus'])
             ->middleware(['role:admin']);
+
+            Route::get('/my', [PeminjamanController::class, 'myLoans']);
+
+        Route::post('/', [PeminjamanController::class, 'store']);
+
+        // admin/owner: lihat semua
+        Route::get('/', [PeminjamanController::class, 'index'])
+            ->middleware('role:admin,owner');
+
+        // detail
+        Route::get('/{id}', [PeminjamanController::class, 'show']);
+
+        // CUSTOMER: bayar pinjaman sendiri
+        Route::post('/{id}/bayar', [PeminjamanController::class, 'pay'])
+            ->middleware('role:customer');
+
+        // CUSTOMER/ADMIN/OWNER: lihat histori pembayaran pinjaman
+        Route::get('/{id}/pembayaran', [PeminjamanController::class, 'payments'])
+            ->middleware('role:customer,admin,owner');
+
+        // ADMIN: approve/reject/update status (kalau masih pakai)
+        Route::put('/{id}/approve', [PeminjamanController::class, 'approve'])
+            ->middleware('role:admin');
+
+        Route::put('/{id}/reject', [PeminjamanController::class, 'reject'])
+            ->middleware('role:admin');
+
+        Route::put('/{id}/status', [PeminjamanController::class, 'updateStatus'])
+            ->middleware('role:admin');
     });
 
 });

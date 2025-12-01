@@ -11,12 +11,7 @@ class BankController extends Controller
     public function index()
     {
         $banks = Bank::all();
-        // Frontend biasanya butuh array langsung atau dibungkus data
-        return response()->json($banks); 
-        
-        // CATATAN: 
-        // Kalau mau pakai format { message, data }, pastikan Frontend menyesuaikan.
-        // Tapi format return $banks; (array langsung) lebih mudah ditangkap axios.
+        return response()->json($banks);
     }
 
     // GET /api/bank/{kode_bank} (PUBLIC)
@@ -35,9 +30,8 @@ class BankController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Pastikan nama tabel di sini 'bank' (singular) sesuai database kamu
-            'kode_bank' => 'required|string|max:10|unique:bank,kode_bank',
-            'nama_bank' => 'required|string|max:100|unique:bank,nama_bank',
+            'kode_bank' => 'required|string|max:10|unique:banks,kode_bank',
+            'nama_bank' => 'required|string|max:100|unique:banks,nama_bank',
             'alamat' => 'required|string',
             'kota' => 'required|string|max:50',
             'provinsi' => 'required|string|max:50'
@@ -61,8 +55,7 @@ class BankController extends Controller
         }
 
         $request->validate([
-            // Validasi unique ignore id saat ini
-            'nama_bank' => 'required|string|max:100|unique:bank,nama_bank,' . $kode_bank . ',kode_bank',
+            'nama_bank' => 'required|string|max:100|unique:banks,nama_bank,' . $kode_bank . ',kode_bank',
             'alamat' => 'required|string',
             'kota' => 'required|string|max:50',
             'provinsi' => 'required|string|max:50'
@@ -85,16 +78,15 @@ class BankController extends Controller
             return response()->json(['message' => 'Bank tidak ditemukan'], 404);
         }
 
-        // Cek relasi user sebelum hapus (opsional, tapi bagus)
-        // Pastikan di Model Bank ada method public function users() { ... }
+        // Cek relasi user sebelum hapus
         try {
             if (method_exists($bank, 'users') && $bank->users()->exists()) {
-                 return response()->json([
+                return response()->json([
                     'message' => 'Tidak bisa menghapus bank. Masih ada user yang menggunakan bank ini.'
                 ], 422);
             }
         } catch (\Exception $e) {
-            // Abaikan error jika relasi belum dibuat, lanjut delete
+            // Abaikan jika relasi belum siap
         }
 
         $bank->delete();

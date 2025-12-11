@@ -1,22 +1,21 @@
 <?php
 
 return [
-    'paths' => ['api/*'],
-    
+
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+
     'allowed_methods' => ['*'],
-    
+
     'allowed_origins' => [
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
+        'https://pinjaman-online-bay.vercel.app',
     ],
-    
-    'allowed_origins_patterns' => [],
-    
+
     'allowed_headers' => ['*'],
-    
+
     'exposed_headers' => [],
-    
+
     'max_age' => 0,
-    
-    'supports_credentials' => false, // ✅ Change to false for token-based
+
+    'supports_credentials' => true,
 ];
+

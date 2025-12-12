@@ -20,3 +20,10 @@ Route::get('/login', function () {
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/run-artisan-fix', function () {
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    return 'OK';
+});

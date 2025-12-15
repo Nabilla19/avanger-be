@@ -42,4 +42,12 @@ class UserPolicy
         // Owner can only delete admin users
         return $user->role === 'owner' && $model->role === 'admin';
     }
+
+    /**
+     * Determine whether the user can view audit logs.
+     */
+    public function viewAuditLogs(User $user)
+    {
+        return $user->role === 'owner';
+    }
 }

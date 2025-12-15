@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\UserController;
@@ -52,6 +53,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::put('/{user}', [UserController::class, 'update']);
         Route::delete('/{user}', [UserController::class, 'destroy']);
+    });
+
+    // == AUDIT LOGS ROUTES (OWNER ONLY) ==
+    Route::prefix('audit-logs')->middleware(['role:owner'])->group(function () {
+        Route::get('/', [AuditLogController::class, 'index']);
+        Route::get('/entity/{entityType}/{entityId}', [AuditLogController::class, 'getEntityLogs']);
     });
 
     // == PEMINJAMAN ROUTES ==

@@ -1,2 +1,68 @@
-User-agent: *
-Disallow:
+KI
+
+*install wireshark
+sudo apt install wireshark -y
+Allow non-superusers to capture packets?  →  YES
+
+*install snort
+sudo apt install snort -y
+Network address to monitor: 192.168.1.0/24 = atur ip
+
+*konfigurasi snort
+sudo nano /etc/snort/rules/local.rules
+sudo snort -T -c /etc/snort/snort.conf
+
+*cek snort
+sudo snort -v -i enp0s3
+
+*running snort
+sudo snort -A console -c /etc/snort/snort.conf -i enp0s3
+
+*open wireshark dri terminal
+sudo wireshark
+
+BUAT USER
+sudo adduser nia_4
+sudo usermod -aG sudo nia_4
+su - nia_4
+sudo ls /root 
+
+jadi sebelum ada aktivitas buat "su - nia_4"
+
+"Ping of Death = ICMP packet yang terlalu besar"
+
+KONFIGURASI SNORT
+sudo snort -v -i enp0s3
+
+
+1. Apakah ukuran ICMP itu 65.535 byte?
+Bukan.
+Yang maksimum 65.535 byte adalah ukuran total paket IP, sesuai standar RFC 791.
+ICMP ada di dalam paket IP, jadi batas ICMP ikut dibatasi oleh ukuran paket IP.
+Total paket IP terdiri dari:
+Header IP (20 byte)
+Header ICMP (8 byte)
+Payload ICMP (sisanya)
+Maka ukuran payload ICMP maksimal:
+65.535 − 20 − 8 = 65.507 byte
+Itulah payload maksimum ICMP (±65.507 byte).
+
+
+Ping of Death (POD) adalah serangan yang mengirim ICMP ping (echo request) dengan ukuran melebihi batas maksimal paket IP (65.535 byte).
+Karena paket terlalu besar, maka:
+Paket harus difragmentasi
+Ketika target mencoba reassemble, bisa terjadi overflow
+OS lama bisa crash, freeze, atau restart
+Sistem modern biasanya block / drop langsung
+Ringkasnya:
+POD = mengirim ping dengan ukuran sangat besar (>65.535), membuat target error/crash.
+
+
+
+adduser email
+
+rezki
+eki12345
+
+irfan
+irfan123

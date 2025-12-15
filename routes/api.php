@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
             ->middleware(['role:owner']);
         Route::delete('/{kode_bank}', [BankController::class, 'destroy'])
             ->middleware(['role:owner']);
+    });
+
+    // == USER MANAGEMENT ROUTES (OWNER ONLY) ==
+    Route::prefix('users')->middleware(['role:owner'])->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::put('/{user}', [UserController::class, 'update']);
+        Route::delete('/{user}', [UserController::class, 'destroy']);
     });
 
     // == PEMINJAMAN ROUTES ==

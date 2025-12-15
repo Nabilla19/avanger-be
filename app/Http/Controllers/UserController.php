@@ -35,6 +35,7 @@ class UserController extends Controller
             'name' => 'sometimes|string|max:255',
             'username' => ['sometimes', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'email' => ['sometimes', 'email', Rule::unique('users')->ignore($user->id)],
+            'password' => 'sometimes|string|min:8',
             'role' => 'sometimes|in:admin,owner,customer',
             'no_hp' => 'sometimes|string|max:12',
             'no_hp2' => 'sometimes|string|max:12',
@@ -48,6 +49,11 @@ class UserController extends Controller
             'alamat' => 'sometimes|string',
             'kode_bank' => 'sometimes|string|exists:banks,kode_bank',
         ]);
+
+        // Hash password if provided
+        if (isset($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        }
 
         // Prevent changing role to owner if current user is owner
         if (isset($validated['role']) && $validated['role'] === 'owner' && $request->user()->role === 'owner') {

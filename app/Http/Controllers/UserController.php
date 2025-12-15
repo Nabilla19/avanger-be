@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -30,6 +31,9 @@ class UserController extends Controller
     {
         // Authorize using policy
         $this->authorize('update', $user);
+
+        // Store old values for audit log
+        $oldValues = $user->toArray();
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -62,6 +66,18 @@ class UserController extends Controller
 
         $user->update($validated);
 
+        // Log the update action
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action' => 'user_updated',
+            'entity_type' => 'App\Models\User',
+            'entity_id' => $user->id,
+            'old_values' => $oldValues,
+            'new_values' => $user->fresh()->toArray(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return response()->json([
             'data' => $user->load('bank'),
             'message' => 'User updated successfully'
@@ -81,7 +97,20 @@ class UserController extends Controller
             return response()->json(['message' => 'Cannot delete yourself'], 403);
         }
 
+        $userData = $user->toArray();
         $user->delete();
+
+        // Log the delete action
+        AuditLog::create([
+            'user_id' => request()->user()->id,
+            'action' => 'user_deleted',
+            'entity_type' => 'App\Models\User',
+            'entity_id' => $user->id,
+            'old_values' => $userData,
+            'new_values' => null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
 
         return response()->json([
             'message' => 'User deleted successfully'
